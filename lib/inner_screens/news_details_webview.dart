@@ -11,7 +11,8 @@ import '../services/utils.dart';
 import '../widgets/vertical_spacing.dart';
 
 class NewsDetailsWebView extends StatefulWidget {
-  const NewsDetailsWebView({Key? key}) : super(key: key);
+  const NewsDetailsWebView({Key? key, required this.url}) : super(key: key);
+  final String url;
 
   @override
   State<NewsDetailsWebView> createState() => _NewsDetailsWebViewState();
@@ -20,8 +21,7 @@ class NewsDetailsWebView extends StatefulWidget {
 class _NewsDetailsWebViewState extends State<NewsDetailsWebView> {
   late WebViewController _webViewController;
   double _progress = 0.0;
-  final url =
-      "https://techcrunch.com/2022/06/17/marc-lores-food-delivery-startup-wonder-raises-350m-3-5b-valuation/";
+
   @override
   Widget build(BuildContext context) {
     final Color color = Utils(context).getColor;
@@ -38,7 +38,9 @@ class _NewsDetailsWebViewState extends State<NewsDetailsWebView> {
       child: Scaffold(
         appBar: AppBar(
             leading: IconButton(
-              icon: const Icon(IconlyLight.arrowLeft2),
+              icon: const Icon(
+                IconlyLight.arrowLeft2,
+              ),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -48,7 +50,7 @@ class _NewsDetailsWebViewState extends State<NewsDetailsWebView> {
             elevation: 0,
             centerTitle: true,
             title: Text(
-              "URL",
+              widget.url,
               style: TextStyle(color: color),
             ),
             actions: [
@@ -58,6 +60,7 @@ class _NewsDetailsWebViewState extends State<NewsDetailsWebView> {
                 },
                 icon: const Icon(
                   Icons.more_horiz,
+                  color: Colors.red,
                 ),
               ),
             ]),
@@ -70,7 +73,7 @@ class _NewsDetailsWebViewState extends State<NewsDetailsWebView> {
             ),
             Expanded(
               child: WebView(
-                initialUrl: url,
+                initialUrl: widget.url,
                 zoomEnabled: true,
                 onProgress: (progress) {
                   setState(() {
@@ -133,7 +136,8 @@ class _NewsDetailsWebViewState extends State<NewsDetailsWebView> {
                   title: const Text('Share'),
                   onTap: () async {
                     try {
-                      await Share.share('url', subject: 'Look what I made!');
+                      await Share.share(widget.url,
+                          subject: 'Look what I made!');
                     } catch (err) {
                       GlobalMethods.errorDialog(
                           errorMessage: err.toString(), context: context);
@@ -144,8 +148,8 @@ class _NewsDetailsWebViewState extends State<NewsDetailsWebView> {
                   leading: const Icon(Icons.open_in_browser),
                   title: const Text('Open in browser'),
                   onTap: () async {
-                    if (!await launchUrl(Uri.parse(url))) {
-                      throw 'Could not launch $url';
+                    if (!await launchUrl(Uri.parse(widget.url))) {
+                      throw 'Could not launch ${widget.url}}';
                     }
                   },
                 ),

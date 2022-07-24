@@ -10,8 +10,15 @@ import '../services/utils.dart';
 import 'vertical_spacing.dart';
 
 class ArticlesWidget extends StatelessWidget {
-  const ArticlesWidget({Key? key, required this.imageUrl}) : super(key: key);
-  final String imageUrl;
+  const ArticlesWidget(
+      {Key? key,
+      required this.imageUrl,
+      required this.title,
+      required this.url,
+      required this.dateToShow,
+      required this.readingTime})
+      : super(key: key);
+  final String imageUrl, title, url, dateToShow, readingTime;
   @override
   Widget build(BuildContext context) {
     Size size = Utils(context).getScreenSize;
@@ -66,7 +73,7 @@ class ArticlesWidget extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           Text(
-                            'title ' * 100,
+                            title,
                             textAlign: TextAlign.justify,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
@@ -76,7 +83,7 @@ class ArticlesWidget extends StatelessWidget {
                           Align(
                             alignment: Alignment.topRight,
                             child: Text(
-                              '🕒 Reading time',
+                              '🕒$readingTime',
                               style: smallTextStyle,
                             ),
                           ),
@@ -89,7 +96,9 @@ class ArticlesWidget extends StatelessWidget {
                                       context,
                                       PageTransition(
                                           type: PageTransitionType.rightToLeft,
-                                          child: const NewsDetailsWebView(),
+                                          child: NewsDetailsWebView(
+                                            url: url,
+                                          ),
                                           inheritTheme: true,
                                           ctx: context),
                                     );
@@ -100,7 +109,7 @@ class ArticlesWidget extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  '20-2-2020 ' * 2,
+                                  dateToShow,
                                   maxLines: 1,
                                   style: smallTextStyle,
                                 ),
