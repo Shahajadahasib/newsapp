@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:newsapp/models/news_model.dart';
+import 'package:newsapp/providers/news_provider.dart';
 import 'package:newsapp/widgets/empty_screen.dart';
 import 'package:newsapp/widgets/loading_widget.dart';
 
 import 'package:page_transition/page_transition.dart';
+import 'package:provider/provider.dart';
 
 import '../consts/vars.dart';
 import '../inner_screens/search_screen.dart';
@@ -31,20 +33,10 @@ class _HomeScreenState extends State<HomeScreen> {
   String sortBy = SortByEnum.publishedAt.name;
 
   @override
-  void didChangeDependencies() {
-    getNewsList();
-    super.didChangeDependencies();
-  }
-
-  Future<List<NewsModel>> getNewsList() async {
-    List<NewsModel> newsList = await NewsAPiServices.getAllNews();
-    return newsList;
-  }
-
-  @override
   Widget build(BuildContext context) {
     Size size = Utils(context).getScreenSize;
     final Color color = Utils(context).getColor;
+    final newsProvider = Provider.of<NewsProvider>(context);
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -191,12 +183,17 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: DropdownButton(
                             value: sortBy,
                             items: dropDownItems,
-                            onChanged: (String? value) {}),
+                            onChanged: (String? value) {
+                              setState(() {
+                                sortBy = value!;
+                              });
+                            }),
                       ),
                     ),
                   ),
             FutureBuilder<List<NewsModel>>(
-              future: getNewsList(),
+              future: newsProvider.fetchAllNews(
+                  pageIndex: currentPageIndex + 1, sortBy: sortBy),
               builder: ((context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return newsType == NewsType.allNews
@@ -227,13 +224,16 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: ListView.builder(
                           itemCount: snapshot.data!.length,
                           itemBuilder: (ctx, index) {
-                            return ArticlesWidget(
-                              imageUrl: snapshot.data![index].urlToImage,
-                              dateToShow: snapshot.data![index].dateToShow,
-                              readingTime:
-                                  snapshot.data![index].readingTimeText,
-                              title: snapshot.data![index].title,
-                              url: snapshot.data![index].url,
+                            return ChangeNotifierProvider.value(
+                              value: snapshot.data![index],
+                              child: const ArticlesWidget(
+                                  // imageUrl: snapshot.data![index].urlToImage,
+                                  // dateToShow: snapshot.data![index].dateToShow,
+                                  // readingTime:
+                                  //     snapshot.data![index].readingTimeText,
+                                  // title: snapshot.data![index].title,
+                                  // url: snapshot.data![index].url,
+                                  ),
                             );
                           },
                         ),
@@ -290,7 +290,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Text(text),
       style: ElevatedButton.styleFrom(
           primary: Colors.blue,
-          padding: EdgeInsets.all(6),
+          padding: const EdgeInsets.all(6),
           textStyle:
               const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
     );

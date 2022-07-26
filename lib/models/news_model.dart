@@ -1,4 +1,8 @@
-class NewsModel {
+import 'package:flutter/cupertino.dart';
+import 'package:newsapp/services/global_methods.dart';
+import 'package:reading_time/reading_time.dart';
+
+class NewsModel with ChangeNotifier {
   String newsId,
       sourceName,
       authorName,
@@ -26,19 +30,27 @@ class NewsModel {
   });
 
   factory NewsModel.fromJson(dynamic json) {
+    String title = json["title"] ?? "";
+    String content = json["content"] ?? "";
+    String description = json["description"] ?? "";
+
+    String dateToShow = "";
+    if (json["publishedAt"] != null) {
+      dateToShow = GlobalMethods.formattedDateText(json["publishedAt"]);
+    }
     return NewsModel(
       newsId: json["source"]["id"] ?? "",
       sourceName: json["source"]["name"] ?? "",
       authorName: json["author"] ?? "",
-      title: json["title"] ?? "",
-      description: json["description"] ?? "",
+      title: title,
+      description: description,
       url: json["url"] ?? "",
       urlToImage: json["urlToImage"] ??
           "https://techcrunch.com/wp-content/uploads/2022/01/locket-app.jpg?w=1390&crop=1",
       publishedAt: json["publishedAt"] ?? "",
-      content: json["content"] ?? "",
-      dateToShow: "dateToShow",
-      readingTimeText: "readingTimeText",
+      content: content,
+      dateToShow: dateToShow,
+      readingTimeText: readingTime(title + description + content).msg,
     );
   }
 
