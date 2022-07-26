@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
+import 'package:newsapp/models/bookmark_model.dart';
 import 'package:newsapp/models/news_model.dart';
 
 import 'package:page_transition/page_transition.dart';
@@ -14,12 +15,16 @@ import 'vertical_spacing.dart';
 class ArticlesWidget extends StatelessWidget {
   const ArticlesWidget({
     Key? key,
+    this.isBookmark = false,
   }) : super(key: key);
   // final String imageUrl, title, url, dateToShow, readingTime;
+  final bool isBookmark;
   @override
   Widget build(BuildContext context) {
     Size size = Utils(context).getScreenSize;
-    final newsModelProvider = Provider.of<NewsModel>(context);
+    dynamic newsModelProvider = isBookmark
+        ? Provider.of<BookmarksModel>(context)
+        : Provider.of<NewsModel>(context);
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Material(
@@ -54,13 +59,16 @@ class ArticlesWidget extends StatelessWidget {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10),
-                      child: FancyShimmerImage(
-                        height: size.height * 0.12,
-                        width: size.height * 0.12,
-                        boxFit: BoxFit.fill,
-                        errorWidget:
-                            Image.asset('assets/images/empty_image.png'),
-                        imageUrl: newsModelProvider.urlToImage,
+                      child: Hero(
+                        tag: newsModelProvider.publishedAt,
+                        child: FancyShimmerImage(
+                          height: size.height * 0.12,
+                          width: size.height * 0.12,
+                          boxFit: BoxFit.fill,
+                          errorWidget:
+                              Image.asset('assets/images/empty_image.png'),
+                          imageUrl: newsModelProvider.urlToImage,
+                        ),
                       ),
                     ),
                     const SizedBox(

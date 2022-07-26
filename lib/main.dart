@@ -1,5 +1,6 @@
 //Packages
 import 'package:flutter/material.dart';
+import 'package:newsapp/providers/bookmarks_provider.dart';
 import 'package:newsapp/providers/news_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -50,6 +51,9 @@ class _MyAppState extends State<MyApp> {
         }),
         ChangeNotifierProvider(
           create: (_) => NewsProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => BookmarksProvider(),
         )
       ],
       child:

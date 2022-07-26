@@ -2,11 +2,15 @@ import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:newsapp/models/bookmark_model.dart';
+import 'package:newsapp/providers/bookmarks_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../consts/styles.dart';
 
 import '../providers/news_provider.dart';
+import '../services/global_methods.dart';
 import '../services/utils.dart';
 import '../widgets/vertical_spacing.dart';
 
@@ -19,12 +23,36 @@ class NewsDetailsScreen extends StatefulWidget {
 }
 
 class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
+  bool isInBookmark = false;
+  String? publishedAt;
+  dynamic currBookmark;
+
+  @override
+  void didChangeDependencies() {
+    publishedAt = ModalRoute.of(context)!.settings.arguments as String;
+    final List<BookmarksModel> bookmarkList =
+        Provider.of<BookmarksProvider>(context).getBookmarkList;
+    if (bookmarkList.isEmpty) {
+      return;
+    }
+    currBookmark = bookmarkList
+        .where((element) => element.publishedAt == publishedAt)
+        .toList();
+    if (currBookmark.isEmpty) {
+      isInBookmark = false;
+    } else {
+      isInBookmark = true;
+    }
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     final color = Utils(context).getColor;
     final newsProvider = Provider.of<NewsProvider>(context);
-    final publishedAt = ModalRoute.of(context)!.settings.arguments as String;
-    final currentNews = newsProvider.finByDate(publishedAt: publishedAt);
+    final bookmarksProvider = Provider.of<BookmarksProvider>(context);
+
+    final currentNews = newsProvider.findByDate(publishedAt: publishedAt);
     return Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: color),
@@ -82,10 +110,13 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
                 width: double.infinity,
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 25),
-                  child: FancyShimmerImage(
-                    boxFit: BoxFit.fill,
-                    errorWidget: Image.asset('assets/images/empty_image.png'),
-                    imageUrl: currentNews.urlToImage,
+                  child: Hero(
+                    tag: currentNews.publishedAt,
+                    child: FancyShimmerImage(
+                      boxFit: BoxFit.fill,
+                      errorWidget: Image.asset('assets/images/empty_image.png'),
+                      imageUrl: currentNews.urlToImage,
+                    ),
                   ),
                 ),
               ),
@@ -97,7 +128,18 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
                   child: Row(
                     children: [
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () {
+                          () async {
+                            try {
+                              await Share.share(currentNews.url,
+                                  subject: 'Look what I made!');
+                            } catch (err) {
+                              GlobalMethods.errorDialog(
+                                  errorMessage: err.toString(),
+                                  context: context);
+                            }
+                          };
+                        },
                         child: Card(
                           elevation: 10,
                           shape: const CircleBorder(),
@@ -112,14 +154,24 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
                         ),
                       ),
                       GestureDetector(
-                        onTap: () {},
+                        onTap: () async {
+                          if (isInBookmark) {
+                            await bookmarksProvider.deletBookmark();
+                          } else {
+                            await bookmarksProvider.addToBookmark(
+                                newsModel: currentNews);
+                          }
+                          await bookmarksProvider.fetchBookmarks();
+                        },
                         child: Card(
                           elevation: 10,
                           shape: const CircleBorder(),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Icon(
-                              IconlyLight.bookmark,
+                              isInBookmark
+                                  ? IconlyBold.bookmark
+                                  : IconlyLight.bookmark,
                               size: 28,
                               color: color,
                             ),
