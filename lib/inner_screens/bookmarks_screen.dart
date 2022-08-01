@@ -4,7 +4,6 @@ import 'package:newsapp/models/bookmark_model.dart';
 import 'package:provider/provider.dart';
 
 import '../consts/vars.dart';
-import '../models/news_model.dart';
 import '../providers/bookmarks_provider.dart';
 import '../services/utils.dart';
 import '../widgets/articles_widget.dart';
@@ -45,7 +44,7 @@ class _BookmarkScreenState extends State<BookmarkScreen> {
                 .fetchBookmarks(),
             builder: ((context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return LoadingWidget(
+                return const LoadingWidget(
                   newsType: NewsType.allNews,
                 );
               } else if (snapshot.hasError) {

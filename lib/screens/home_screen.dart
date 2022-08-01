@@ -229,6 +229,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             return ChangeNotifierProvider.value(
                               value: snapshot.data![index],
                               child: const ArticlesWidget(
+                                  // isBookmark: false,
                                   // imageUrl: snapshot.data![index].urlToImage,
                                   // dateToShow: snapshot.data![index].dateToShow,
                                   // readingTime:

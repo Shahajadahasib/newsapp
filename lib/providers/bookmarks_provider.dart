@@ -32,6 +32,7 @@ class BookmarksProvider with ChangeNotifier {
           newsModel.toJson(),
         ),
       );
+      notifyListeners();
       log('Response status: ${response.statusCode}');
       log('Response body :${response.body}');
     } catch (error) {
@@ -39,10 +40,11 @@ class BookmarksProvider with ChangeNotifier {
     }
   }
 
-  Future<void> deletBookmark() async {
+  Future<void> deletBookmark({required String key}) async {
     try {
-      var uri = Uri.https(BASEURL_FIREBASE, "bookmarks.json");
+      var uri = Uri.https(BASEURL_FIREBASE, "bookmarks/$key.json");
       var response = await http.delete(uri);
+      notifyListeners();
       notifyListeners();
       log('Response status: ${response.statusCode}');
       log('Response body :${response.body}');

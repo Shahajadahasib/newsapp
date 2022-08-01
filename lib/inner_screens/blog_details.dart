@@ -156,7 +156,8 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
                       GestureDetector(
                         onTap: () async {
                           if (isInBookmark) {
-                            await bookmarksProvider.deletBookmark();
+                            await bookmarksProvider.deletBookmark(
+                                key: currBookmark[0].bookmarkKey);
                           } else {
                             await bookmarksProvider.addToBookmark(
                                 newsModel: currentNews);
@@ -173,7 +174,7 @@ class _NewsDetailsScreenState extends State<NewsDetailsScreen> {
                                   ? IconlyBold.bookmark
                                   : IconlyLight.bookmark,
                               size: 28,
-                              color: color,
+                              color: isInBookmark ? Colors.green : color,
                             ),
                           ),
                         ),
