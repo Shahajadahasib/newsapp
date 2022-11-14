@@ -17,13 +17,13 @@ samples, guidance on mobile development, and a full API reference.
 <table align = center>
   <tr>
       <td>
-          <img src="preview/home.png" width="320" height="630" />  
+          <img src="preview/home.png" width="310" height="630" />  
       </td>
       <td>
-              <img src="preview/slidebar.png" width="320" height="630" />
+              <img src="preview/slidebar.png" width="310" height="630" />
       </td>
       <td>
-            <img src="preview/bookmark.png" width="320" height="630" />
+            <img src="preview/bookmark.png" width="310" height="630" />
       </td>
   </tr>
 </table>
