@@ -14,6 +14,16 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
-![appui](preview/home.png)
-![appui](preview/slidebar.png)
-![appui](preview/bookmark.png)
+<table align = center>
+  <tr>
+      <td>
+          <img src="preview/home.png" width="310" height="630" />  
+      </td>
+      <td>
+              <img src="preview/slidebar.png" width="310" height="630" />
+      </td>
+      <td>
+            <img src="preview/bookmark.png" width="310" height="630" />
+      </td>
+  </tr>
+</table>
